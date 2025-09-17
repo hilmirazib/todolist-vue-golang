@@ -3,11 +3,13 @@ package handlers
 import (
 	"net/http"
 	"strconv"
-
+	"github.com/go-playground/validator/v10"
 	"github.com/gin-gonic/gin"
 	"my-todolist/models"
 	"my-todolist/db"
 )
+
+var validate = validator.New()
 
 type CreateTodoDTO struct {
 	Title string `json:"title" binding:"required"`
@@ -21,7 +23,7 @@ type UpdateTodoDTO struct {
 func ListTodos(c *gin.Context) {
 	var todos []models.Todo
 	if err := db.Conn.Order("id DESC").Find(&todos).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "DB_ERROR"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "DB_ERROR", "details": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, todos)

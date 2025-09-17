@@ -24,10 +24,18 @@ func main() {
 	db.Connect(&models.Todo{})
 
 	r := gin.Default()
+
+	origins := strings.Split(os.Getenv("CORS_ALLOW_ORIGINS"), ",")
+	for i := range origins {
+		origins[i] = strings.TrimSpace(origins[i])
+	}
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"}, // sesuaikan di prod
+		// AllowOrigins: []string{"*"}, // sesuaikan di prod
+		AllowOrigins: origins,
 		AllowMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Accept"},
+		AllowCredentials: true,
+		MaxAge: 12 * time.Hour,
 	}))
 
 	r.GET("/healthz", func(c *gin.Context) { c.JSON(200, gin.H{"ok": true}) })
