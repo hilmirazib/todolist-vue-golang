@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     env_file:
-      - ./backend/.env
+      - ./backend/.env.development
     depends_on:
       - mysql
 
