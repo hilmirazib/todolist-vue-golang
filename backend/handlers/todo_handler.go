@@ -1,20 +1,20 @@
 package handlers
 
 import (
+	"my-todolist/db"
+	"my-todolist/models"
 	"net/http"
 	"strconv"
-	"github.com/go-playground/validator/v10"
+
 	"github.com/gin-gonic/gin"
-	"my-todolist/models"
-	"my-todolist/db"
+	"github.com/go-playground/validator/v10"
 )
 
 var validate = validator.New()
 
 type CreateTodoDTO struct {
-	Title string `json:"title" binding:"required"`
+	Title string `json:"title" validate:"required,min=1,max=255"`
 }
-
 type UpdateTodoDTO struct {
 	Title *string `json:"title"`
 	Done  *bool   `json:"done"`
@@ -35,11 +35,11 @@ func CreateTodo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR"})
 		return
 	}
-	t := models.Todo{Title: body.Title}
-	if err := db.Conn.Create(&t).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "DB_ERROR"})
+	if err := validate.Struct(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR", "detail": err.Error()})
 		return
 	}
+	t := models.Todo{Title: body.Title}
 	c.JSON(http.StatusCreated, t)
 }
 

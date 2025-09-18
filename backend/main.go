@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -11,7 +13,6 @@ import (
 	"my-todolist/db"
 	"my-todolist/models"
 	"my-todolist/routes"
-
 )
 
 func main() {
@@ -31,11 +32,11 @@ func main() {
 	}
 	r.Use(cors.New(cors.Config{
 		// AllowOrigins: []string{"*"}, // sesuaikan di prod
-		AllowOrigins: origins,
-		AllowMethods: []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Origin", "Content-Type", "Accept"},
+		AllowOrigins:     origins,
+		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		AllowCredentials: true,
-		MaxAge: 12 * time.Hour,
+		MaxAge:           12 * time.Hour,
 	}))
 
 	r.GET("/healthz", func(c *gin.Context) { c.JSON(200, gin.H{"ok": true}) })
