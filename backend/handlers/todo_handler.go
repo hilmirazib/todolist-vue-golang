@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"my-todolist/db"
 	"my-todolist/models"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
 var validate = validator.New()
@@ -60,7 +62,11 @@ func UpdateTodo(c *gin.Context) {
 	}
 	var t models.Todo
 	if err := db.Conn.First(&t, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "NOT_FOUND"})
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "NOT_FOUND"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "DB_ERROR"})
+		}
 		return
 	}
 	if body.Title != nil {
