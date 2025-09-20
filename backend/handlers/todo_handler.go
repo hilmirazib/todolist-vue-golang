@@ -40,6 +40,10 @@ func CreateTodo(c *gin.Context) {
 		return
 	}
 	t := models.Todo{Title: body.Title}
+	if err := db.Conn.Create(&t).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "DB_ERROR", "details": err.Error()})
+		return
+	}
 	c.JSON(http.StatusCreated, t)
 }
 
