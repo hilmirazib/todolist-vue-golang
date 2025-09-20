@@ -48,7 +48,11 @@ func CreateTodo(c *gin.Context) {
 }
 
 func UpdateTodo(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "INVALID_ID"})
+		return
+	}
 	var body UpdateTodoDTO
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR"})
@@ -73,7 +77,11 @@ func UpdateTodo(c *gin.Context) {
 }
 
 func DeleteTodo(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "INVALID_ID"})
+		return
+	}
 	if err := db.Conn.Delete(&models.Todo{}, id).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "DB_ERROR"})
 		return
