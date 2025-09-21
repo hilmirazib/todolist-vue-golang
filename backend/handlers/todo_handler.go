@@ -6,6 +6,7 @@ import (
 	"my-todolist/models"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -37,6 +38,11 @@ func CreateTodo(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR"})
 		return
 	}
+	body.Title = strings.TrimSpace(body.Title)
+	if body.Title == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR", "detail": "Title cannot be empty"})
+		return
+	}
 	if err := validate.Struct(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR", "detail": err.Error()})
 		return
@@ -59,6 +65,14 @@ func UpdateTodo(c *gin.Context) {
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR"})
 		return
+	}
+	if body.Title != nil {
+		trimmed := strings.TrimSpace(*body.Title)
+		if trimmed == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR", "detail": "Title cannot be empty"})
+			return
+		}
+		body.Title = &trimmed
 	}
 	var t models.Todo
 	if err := db.Conn.First(&t, id).Error; err != nil {
