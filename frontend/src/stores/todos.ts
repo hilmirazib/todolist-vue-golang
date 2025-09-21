@@ -30,10 +30,9 @@ export const useTodos = defineStore('todos', {
         this.error = 'Failed to create todo'
         throw err
       }
-
     },
     async toggle(id: number, done: boolean) {
-      const idx = this.items.findIndex(t => t.id === id)
+      const idx = this.items.findIndex((t) => t.id === id)
       if (idx < 0) return
 
       const previous = { ...this.items[idx] }
@@ -50,7 +49,7 @@ export const useTodos = defineStore('todos', {
       }
     },
     async rename(id: number, title: string) {
-      const idx = this.items.findIndex(t => t.id === id)
+      const idx = this.items.findIndex((t) => t.id === id)
       if (idx < 0) return
 
       const previous = { ...this.items[idx] }
@@ -68,7 +67,7 @@ export const useTodos = defineStore('todos', {
     },
     async remove(id: number) {
       const previous = [...this.items]
-      this.items = this.items.filter(t => t.id !== id)
+      this.items = this.items.filter((t) => t.id !== id)
       this.error = null
 
       try {

@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-6" style="max-width: 720px; margin: 0 auto;">
+  <div class="pa-6" style="max-width: 720px; margin: 0 auto">
     <v-card elevation="2">
       <v-card-title class="text-h6">Golang TodoList</v-card-title>
       <v-card-text>
@@ -14,12 +14,7 @@
           <v-btn color="primary" @click="create">Add</v-btn>
         </div>
 
-        <v-alert
-          v-if="store.error"
-          type="error"
-          variant="tonal"
-          class="mb-3"
-        >
+        <v-alert v-if="store.error" type="error" variant="tonal" class="mb-3">
           {{ store.error }}
         </v-alert>
 
@@ -31,17 +26,13 @@
 
         <v-list v-else :lines="'one'" class="py-0">
           <template v-if="store.items.length">
-            <v-list-item
-              v-for="t in store.items"
-              :key="t.id"
-              class="py-2"
-            >
+            <v-list-item v-for="t in store.items" :key="t.id" class="py-2">
               <template #prepend>
                 <v-checkbox
                   :model-value="t.done"
                   hide-details
                   density="compact"
-                  @update:model-value="v => toggle(t, v)"
+                  @update:model-value="(v) => toggle(t, v)"
                 />
               </template>
 
@@ -54,12 +45,7 @@
               <template #append>
                 <div class="d-flex ga-1">
                   <v-btn size="small" variant="text" @click="edit(t)">Edit</v-btn>
-                  <v-btn
-                    size="small"
-                    variant="text"
-                    color="error"
-                    @click="askDelete(t)"
-                  >
+                  <v-btn size="small" variant="text" color="error" @click="askDelete(t)">
                     Delete
                   </v-btn>
                 </div>
@@ -68,9 +54,7 @@
           </template>
 
           <template v-else>
-            <div class="text-medium-emphasis text-center py-6">
-              No tasks yet.
-            </div>
+            <div class="text-medium-emphasis text-center py-6">No tasks yet.</div>
           </template>
         </v-list>
       </v-card-text>
@@ -95,9 +79,7 @@
     <v-dialog v-model="confirmDelete.visible" max-width="420">
       <v-card>
         <v-card-title class="text-h6">Delete this task?</v-card-title>
-        <v-card-text>
-          This action cannot be undone.
-        </v-card-text>
+        <v-card-text> This action cannot be undone. </v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn variant="text" @click="confirmDelete.visible = false">Cancel</v-btn>
@@ -116,15 +98,19 @@ import type { Todo } from '../types'
 const store = useTodos()
 
 const title = ref('')
-const editing = reactive<{ visible: boolean; id: number | null; title: string }>({
+const editing = reactive<{
+  visible: boolean
+  id: number | null
+  title: string
+}>({
   visible: false,
   id: null,
-  title: ''
+  title: '',
 })
 
 const confirmDelete = reactive<{ visible: boolean; id: number | null }>({
   visible: false,
-  id: null
+  id: null,
 })
 
 onMounted(() => {
@@ -144,12 +130,12 @@ const create = async () => {
 
 const toggle = (t: Todo, v: boolean | null) => {
   if (typeof v !== 'boolean') return
-  store.toggle(t.id, v).catch(err => {
+  store.toggle(t.id, v).catch((err) => {
     console.error(err)
   })
 }
 
-const edit = (t: any) => {
+const edit = (t: Todo) => {
   editing.visible = true
   editing.id = t.id
   editing.title = t.title
@@ -166,7 +152,7 @@ const saveEdit = async () => {
   }
 }
 
-const askDelete = (t: any) => {
+const askDelete = (t: Todo) => {
   confirmDelete.visible = true
   confirmDelete.id = t.id
 }
