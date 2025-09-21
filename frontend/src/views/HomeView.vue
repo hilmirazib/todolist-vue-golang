@@ -41,7 +41,7 @@
                   :model-value="t.done"
                   hide-details
                   density="compact"
-                  @update:model-value="(v:boolean) => toggle(t, v)"
+                  @update:model-value="v => toggle(t, v)"
                 />
               </template>
 
@@ -111,6 +111,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useTodos } from '../stores/todos'
+import type { Todo } from '../types'
 
 const store = useTodos()
 
@@ -133,12 +134,19 @@ onMounted(() => {
 const create = async () => {
   const value = title.value.trim()
   if (!value) return
-  await store.add(value)
-  title.value = ''
+  try {
+    await store.add(value)
+    title.value = ''
+  } catch (err) {
+    console.error(err)
+  }
 }
 
-const toggle = async (t: any, v: boolean) => {
-  await store.toggle(t.id, v)
+const toggle = (t: Todo, v: boolean | null) => {
+  if (typeof v !== 'boolean') return
+  store.toggle(t.id, v).catch(err => {
+    console.error(err)
+  })
 }
 
 const edit = (t: any) => {
@@ -150,8 +158,12 @@ const edit = (t: any) => {
 const saveEdit = async () => {
   const val = editing.title.trim()
   if (!val || editing.id == null) return
-  await store.rename(editing.id, val)
-  editing.visible = false
+  try {
+    await store.rename(editing.id, val)
+    editing.visible = false
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 const askDelete = (t: any) => {
@@ -161,9 +173,13 @@ const askDelete = (t: any) => {
 
 const confirmRemove = async () => {
   if (confirmDelete.id == null) return
-  await store.remove(confirmDelete.id)
-  confirmDelete.visible = false
-  confirmDelete.id = null
+  try {
+    await store.remove(confirmDelete.id)
+    confirmDelete.visible = false
+    confirmDelete.id = null
+  } catch (err) {
+    console.error(err)
+  }
 }
 </script>
 
