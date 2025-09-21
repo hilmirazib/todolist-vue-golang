@@ -121,7 +121,7 @@ docker compose up -d --build
 ## 🧩 Catatan Pengembangan Selanjutnya
 
 * **ENV terpisah**: `.env.development`, `.env.production` ✅ done
-* **Testing**: Unit test dengan `httptest`, e2e sederhana untuk API
+* **Testing**: Unit test untuk handlers dengan `httptest` ✅ done, e2e sederhana untuk API
 * **CI/CD**: GitHub Actions (build & test backend & frontend)
 * **Security**:
 
