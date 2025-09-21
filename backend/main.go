@@ -44,9 +44,18 @@ func main() {
 		)
 	})
 
-	origins := strings.Split(os.Getenv("CORS_ALLOW_ORIGINS"), ",")
-	for i := range origins {
-		origins[i] = strings.TrimSpace(origins[i])
+	defaultOrigins := []string{"http://localhost:5173"}
+	rawOrigins := strings.Split(os.Getenv("CORS_ALLOW_ORIGINS"), ",")
+	origins := make([]string, 0, len(rawOrigins))
+	for _, origin := range rawOrigins {
+		trimmed := strings.TrimSpace(origin)
+		if trimmed != "" {
+			origins = append(origins, trimmed)
+		}
+	}
+	if len(origins) == 0 {
+		sugar.Warnw("CORS_ALLOW_ORIGINS is empty, using safe defaults", "origins", defaultOrigins)
+		origins = defaultOrigins
 	}
 	r.Use(cors.New(cors.Config{
 		// AllowOrigins: []string{"*"}, // sesuaikan di prod
