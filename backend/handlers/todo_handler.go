@@ -72,6 +72,10 @@ func UpdateTodo(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR", "detail": "Title cannot be empty"})
 			return
 		}
+		if err := validate.Struct(&CreateTodoDTO{Title: trimmed}); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "VALIDATION_ERROR", "detail": err.Error()})
+			return
+		}
 		body.Title = &trimmed
 	}
 	var t models.Todo
