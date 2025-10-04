@@ -31,6 +31,7 @@ func main() {
 	db.Connect(&models.Todo{})
 
 	r := gin.New()
+	r.Use(gin.Recovery())
 	r.Use(func(c *gin.Context) {
 		start := time.Now()
 		c.Next()
